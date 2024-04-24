@@ -1,6 +1,23 @@
 import { useEffect, useState } from "react";
 import Random from "./Random";
 import { Input } from "@/components/ui/input";
+import { Imena } from "./Imena";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Country from "./Country";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export default function App() {
   const [fact, setFact] = useState({});
@@ -12,6 +29,9 @@ export default function App() {
   // ustvari state "colors"
   // zacetna vrednost je seznam petih barv - besed
   // uporabit colors z map-om (spodaj pri drzavah)
+
+  // DODAJ state: "region" --> vrednost == "Europe"
+  const [region, setRegion] = useState("Europe");
 
   async function getRandomFact() {
     const response = await fetch("http://numbersapi.com/random?json");
@@ -48,13 +68,36 @@ export default function App() {
 
   return (
     <div className="container">
-      <h1>Državi</h1>
-      {countries
-        // samo drzave ki imajo region na Europe
-        .filter((country) => country.region == "Europe")
-        .map((country) => (
-          <p>{country.name.common}</p>
-        ))}
+      <h1>Države</h1>
+      <h3>Izbrana regija: {region}</h3>
+      <Select onValueChange={(value) => setRegion(value)}>
+        <SelectTrigger className="w-[200px]">
+          <SelectValue placeholder="Regija" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Europe">Evropa</SelectItem>
+          <SelectItem value="Asia">Azija</SelectItem>
+          <SelectItem value="Africa">Afrika</SelectItem>
+          <SelectItem value="Americas">Amerike</SelectItem>
+          <SelectItem value="Oceania">Oceanija</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Carousel>
+        <CarouselContent>
+          {countries
+            // samo drzave ki imajo region na Europe
+            .filter((country) => country.region == region)
+            .map((country) => (
+              <CarouselItem className="basis-1/3">
+                <Country data={country}></Country>
+              </CarouselItem>
+            ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+
       {/*
       dodaj map, ki se sprehodi čez vse drzave in
       vsako izpise kot <p></p>
@@ -62,7 +105,7 @@ export default function App() {
         print(country)
       */}
 
-      {colors.map((c) => (
+      {/* {colors.map((c) => (
         <p>{c}</p>
       ))}
       <Input
@@ -71,7 +114,7 @@ export default function App() {
         onChange={(e) => setNumber(e.target.value)}
       />
       <p>{number}</p>
-      <Random fact={fact}></Random>
+      <Random fact={fact}></Random> */}
     </div>
   );
 }
